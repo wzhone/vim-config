@@ -21,10 +21,15 @@ set t_Co=256
 set fillchars=stl:\ 
 set backspace=indent,eol,start
 set foldcolumn=1
-"set signcolumn=number
+set signcolumn=number
 set numberwidth=1
 set scrolloff=6
 set undofile
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set autoindent
+
 
 colorscheme torte
 
@@ -38,16 +43,30 @@ execute ":command! Config :e " g:plug_home.'/vim-config/plugin/config.vim'
 execute ":command! InitConfig :e $HOME/.config/nvim/init.vim"
 execute ":command! ReloadConfig :e source "g:plug_home.'/vim-config/plugin/config.vim'
 
+let mapleader="'"
 
-let mapleader=","
+inoremap jj <Esc>
+inoremap kk <Esc>
+"inoremap ll <Esc>
+"inoremap hh <Esc>
+inoremap <M-j> <c-o>j
+inoremap <M-k> <c-o>k
+inoremap <M-h> <c-o>h
+inoremap <M-l> <c-o>l
+nnoremap <C-j> jj
+nnoremap <C-k> kk
+nnoremap <C-h> hh
+nnoremap <C-l> ll
 
-noremap <C-S> :w<CR>
+" noremap <leader>a ^
+" noremap <leader>f $
 
-noremap <F5> :make<CR>
-inoremap <F5> <ESC>:make<CR>
+
+noremap <F5> :Make<CR>
+inoremap <F5> <ESC>:Make<CR>
 
 nnoremap <Leader>C :set cursorline! cursorcolumn!<CR>
-set cursorline
+"set cursorline
 set mouse=a
 
 "noremap <C-S-W> :w !sudo tee %<CR>
@@ -112,13 +131,10 @@ let g:choosewin_label = "asdfghjkl"
 
 
 
-filetype plugin indent on
-set tabstop=2
-set shiftwidth=2
-set expandtab
+"filetype plugin indent on
 
-augroup autoformat_settings
-  autocmd FileType yml,yaml set shiftwidth=2
+"augroup autoformat_settings
+"  autocmd FileType yml,yaml set shiftwidth=2
 
   " autocmd FileType bzl AutoFormatBuffer buildifier
   " autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
@@ -127,11 +143,11 @@ augroup autoformat_settings
   " autocmd FileType gn AutoFormatBuffer gn
   " autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
   " autocmd FileType java AutoFormatBuffer google-java-format
-  " autocmd FileType python AutoFormatBuffer yapf
-  " " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+	"autocmd FileType python set foldmethod=indent
+  " autocmd FileType python AutoFormatBuffer autopep8
   " autocmd FileType rust AutoFormatBuffer rustfmt
   " autocmd FileType vue AutoFormatBuffer prettier
-augroup END
+"augroup END
 
 
 "let g:rainbow_colors_color= [ 226, 192, 195, 189, 225, 221 ]
@@ -285,16 +301,21 @@ noremap <Leader><Leader>e :Files<CR>
 
 
 """"""""""""""""""""""""""""""
-" NERDTree
-""""""""""""""""""""""""""""""
-"noremap <F3> :NERDTreeToggle<CR>
-"autocmd VimEnter * NERDTree | wincmd p
-"autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
-
-
-
-""""""""""""""""""""""""""""""
 " TagList
 """"""""""""""""""""""""""""""
 noremap <F6> :TlistToggle<CR> 
+let Tlist_Use_Right_Window=1
+let Tlist_Exit_OnlyWindow = 1
+
+"""""""""""""""""""""""""""""
+" QuickScope
+"""""""""""""""""""""""""""""
+
+
+
+
+
+
+
+
 
