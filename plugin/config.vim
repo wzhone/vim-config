@@ -31,7 +31,9 @@ set shiftwidth=2
 set autoindent
 
 
-colorscheme torte
+let g:sonokai_style = 'andromeda'
+let g:sonokai_enable_italic = 1
+colorscheme sonokai
 
 aug QFClose
 au!
@@ -39,11 +41,13 @@ au WinEnter * if winnr('$') == 1 && &buftype == "quickfix"|q|endif
 aug END
 
 
+
+
 execute ":command! Config :e " g:plug_home.'/vim-config/plugin/config.vim'
 execute ":command! InitConfig :e $HOME/.config/nvim/init.vim"
 execute ":command! ReloadConfig :e source "g:plug_home.'/vim-config/plugin/config.vim'
 
-let mapleader="'"
+let mapleader="w"
 
 inoremap jj <Esc>
 inoremap kk <Esc>
@@ -58,12 +62,14 @@ nnoremap <C-k> kk
 nnoremap <C-h> hh
 nnoremap <C-l> ll
 
-" noremap <leader>a ^
-" noremap <leader>f $
+noremap <leader>h ^
+noremap <leader>l $
 
 
 noremap <F5> :Make<CR>
 inoremap <F5> <ESC>:Make<CR>
+
+vmap <Tab> <shift>\> 
 
 nnoremap <Leader>C :set cursorline! cursorcolumn!<CR>
 "set cursorline
@@ -98,27 +104,27 @@ function! GetBufferList()
   return buflist    
 endfunction
 
-function! ToggleList(bufname, pfx)    
-  let buflist = GetBufferList()    
-  for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')    
-    if bufwinnr(bufnum) != -1    
-      exec(a:pfx.'close')    
-      return    
-    endif    
-  endfor    
-  if a:pfx == 'l' && len(getloclist(0)) == 0    
-      echohl ErrorMsg    
-      echo "Location List is Empty."    
-      return    
-  endif    
-  let winnr = winnr()    
-  exec(a:pfx.'open')    
-  if winnr() != winnr    
-    wincmd p    
-  endif    
-endfunction    
+"function! ToggleList(bufname, pfx)    
+  "let buflist = GetBufferList()    
+  "for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')    
+    "if bufwinnr(bufnum) != -1    
+      "exec(a:pfx.'close')    
+      "return    
+    "endif    
+  "endfor    
+  "if a:pfx == 'l' && len(getloclist(0)) == 0    
+      "echohl ErrorMsg    
+      "echo "Location List is Empty."    
+      "return    
+  "endif    
+  "let winnr = winnr()    
+  "exec(a:pfx.'open')    
+  "if winnr() != winnr    
+    "wincmd p    
+  "endif    
+"endfunction    
      
-nmap <silent> <F2> :call ToggleList("Quickfix", 'c')<CR>
+"nmap <silent> <F2> :call ToggleList("Quickfix", 'c')<CR>
 
 
 """"""""""""""""""""""""""""""
@@ -130,25 +136,34 @@ let g:choosewin_label = "asdfghjkl"
 
 
 
+""""""""""""""""""""""""""""""
+" fold 
+""""""""""""""""""""""""""""""
+"set foldenable
+"set foldclose=all
 
-"filetype plugin indent on
+autocmd FileType js,c,c++ set foldmethod=syntax
+autocmd FileType python set foldmethod=indent
 
-"augroup autoformat_settings
-"  autocmd FileType yml,yaml set shiftwidth=2
+syn region myFold start="{" end="}" transparent fold
+syn sync fromstart
+set foldmethod=syntax
+autocmd BufRead * normal zR
 
-  " autocmd FileType bzl AutoFormatBuffer buildifier
-  " autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
-  " autocmd FileType dart AutoFormatBuffer dartfmt
-  " autocmd FileType go AutoFormatBuffer gofmt
-  " autocmd FileType gn AutoFormatBuffer gn
-  " autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
-  " autocmd FileType java AutoFormatBuffer google-java-format
-	"autocmd FileType python set foldmethod=indent
-  " autocmd FileType python AutoFormatBuffer autopep8
-  " autocmd FileType rust AutoFormatBuffer rustfmt
-  " autocmd FileType vue AutoFormatBuffer prettier
-"augroup END
+" augroup autoformat_settings
+	"autocmd FileType yml,yaml set shiftwidth=2
 
+	 "autocmd FileType bzl AutoFormatBuffer buildifier
+	 "autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
+	 "autocmd FileType dart AutoFormatBuffer dartfmt
+	 "autocmd FileType go AutoFormatBuffer gofmt
+	 "autocmd FileType gn AutoFormatBuffer gn
+	 "autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+	 "autocmd FileType java AutoFormatBuffer google-java-format
+	 "autocmd FileType python AutoFormatBuffer autopep8
+	 "autocmd FileType rust AutoFormatBuffer rustfmt
+	 "autocmd FileType vue AutoFormatBuffer prettier
+" augroup END
 
 "let g:rainbow_colors_color= [ 226, 192, 195, 189, 225, 221 ]
 "call rainbow#enable()
@@ -194,20 +209,21 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <silent><expr> <c-space> coc#refresh()
 inoremap <silent><expr> <NUL> coc#refresh() 
 
-nnoremap <leader><Tab> :call CocAction('jumpDefinition', 'drop')<CR>
-vnoremap <leader><Tab> :call CocAction('jumpDefinition', 'drop')<CR>
+nnoremap g<Tab> :call CocAction('jumpDefinition', 'drop')<CR>
+vnoremap g<Tab> :call CocAction('jumpDefinition', 'drop')<CR>
 
-nnoremap <leader><CR> :call CocAction('jumpDefinition', 'split')<CR>
-vnoremap <leader><CR> :call CocAction('jumpDefinition', 'split')<CR>
-nmap <leader><space> <Plug>(coc-references)
+"nnoremap g<CR> :call CocAction('jumpDefinition', 'split')<CR>
+"vnoremap g<CR> :call CocAction('jumpDefinition', 'split')<CR>
+"nmap <leader><space> <Plug>(coc-references)
 
 nmap gn <Plug>(coc-diagnostic-next-error)
 nmap gp <Plug>(coc-diagnostic-prev-error)
 nmap gi <Plug>(coc-diagnostic-info)
 nmap g= <Plug>(coc-format-selected)
 vmap g= <Plug>(coc-format-selected)
-nmap ga= <Plug>(coc-format)
+nmap gf <Plug>(coc-format)
 nmap gr <Plug>(coc-rename)
+nmap ga :CocCommand clangd.switchSourceHeader<CR>
 "nmap bna <Plug>(coc-diagnostic-next)
 "nmap bpa <Plug>(coc-diagnostic-prev)
 
@@ -217,6 +233,7 @@ nmap gr <Plug>(coc-rename)
 
 " autocmd VimEnter * CocCommand explorer " 开启启动文件浏览器
 " execute("normal! <leader>n")
+" nnoremap <silent> <space>g :<C-u>CocList --normal gstatus<CR>
 
 """"""""""""""""""""""""""""""
 " AirLine
@@ -267,20 +284,20 @@ tnoremap <leader>n  <C-\><C-n>:FloatermToggle<CR>
 
 autocmd TermOpen * call TermInit()
 func TermInit() 
-  setlocal nonu 
-  setlocal norelativenumber 
-  startinsert 
+	setlocal nonu 
+	setlocal norelativenumber 
+	startinsert 
 endfunc 
 
 autocmd TermEnter * call TermEnter()
 func TermEnter()
-  "call rainbow#disable()
-  startinsert 
+	"call rainbow#disable()
+	startinsert 
 endfunc 
 
 autocmd TermLeave * call TermLeave()
 func TermLeave()
-  "call rainbow#enable() 
+	"call rainbow#enable() 
 endfunc
 
 let g:floaterm_autoclose = 1    
@@ -308,14 +325,38 @@ let Tlist_Use_Right_Window=1
 let Tlist_Exit_OnlyWindow = 1
 
 """""""""""""""""""""""""""""
-" QuickScope
+" quickscope
 """""""""""""""""""""""""""""
 
 
 
 
 
+"""""""""""""""""""""""""
+ "nerdcommenter
+"""""""""""""""""""""""""
+filetype plugin on
+let g:NERDCreateDefaultMappings = 0
 
+" vmap <leader>c :call Comment()<CR>
+vmap <leader>c  <Plug>NERDCommenterToggle
+nmap <leader>c  <Plug>NERDCommenterToggle
 
+"function Comment()
+	"execute "normal \<Plug>NERDCommenterToggle"
+	"let [line2, col2] = getpos("'>")[1:2]
+	"if (line2 == line('.'))
+		"let [line1, col1] = getpos("'<")[1:2]
+		"execute ':'.line1
+		"normal V
+		"execute ':'.line2
+	"endif
+"endfunction
+"
+"
+"
+
+" -----------------------
+nnoremap <tab> <shift->>
 
 
