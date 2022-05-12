@@ -1,5 +1,5 @@
-set nu
-set relativenumber
+"set nu
+"set relativenumber
 set lazyredraw
 set wildmenu
 set lazyredraw
@@ -42,7 +42,8 @@ aug END
 
 
 
-
+ 
+highlight EndOfBuffer ctermfg=bg
 execute ":command! Config :e " g:plug_home.'/vim-config/plugin/config.vim'
 execute ":command! InitConfig :e $HOME/.config/nvim/init.vim"
 execute ":command! ReloadConfig :e source "g:plug_home.'/vim-config/plugin/config.vim'
@@ -51,16 +52,12 @@ let mapleader="w"
 
 inoremap jj <Esc>
 inoremap kk <Esc>
-"inoremap ll <Esc>
-"inoremap hh <Esc>
 inoremap <M-j> <c-o>j
 inoremap <M-k> <c-o>k
 inoremap <M-h> <c-o>h
 inoremap <M-l> <c-o>l
-nnoremap <C-j> jj
-nnoremap <C-k> kk
-nnoremap <C-h> hh
-nnoremap <C-l> ll
+nnoremap <C-j> <c-e><c-e>
+nnoremap <C-k> <c-y><c-y>
 
 noremap <leader>h ^
 noremap <leader>l $
@@ -69,17 +66,25 @@ noremap <leader>l $
 noremap <F5> :Make<CR>
 inoremap <F5> <ESC>:Make<CR>
 
-vmap <Tab> <shift>\> 
+" tab
+nnoremap <tab> >>
+nnoremap <s-tab> <<
+vnoremap <tab> >
+vnoremap <s-tab> <
 
 nnoremap <Leader>C :set cursorline! cursorcolumn!<CR>
 "set cursorline
-set mouse=a
+set mouse=v
 
 "noremap <C-S-W> :w !sudo tee %<CR>
 
 tnoremap <C-h> <C-\><C-n>
 
 nnoremap <space> za
+
+noremap <c-s> :w<CR>
+inoremap <c-s> <c-o>:w<CR>
+
 
 highlight LineNr term=bold cterm=NONE ctermfg=blue ctermbg=NONE gui=NONE guifg=red guibg=NONE
 
@@ -104,34 +109,34 @@ function! GetBufferList()
   return buflist    
 endfunction
 
-"function! ToggleList(bufname, pfx)    
-  "let buflist = GetBufferList()    
-  "for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')    
-    "if bufwinnr(bufnum) != -1    
-      "exec(a:pfx.'close')    
-      "return    
-    "endif    
-  "endfor    
-  "if a:pfx == 'l' && len(getloclist(0)) == 0    
-      "echohl ErrorMsg    
-      "echo "Location List is Empty."    
-      "return    
-  "endif    
-  "let winnr = winnr()    
-  "exec(a:pfx.'open')    
-  "if winnr() != winnr    
-    "wincmd p    
-  "endif    
-"endfunction    
+function! ToggleList(bufname, pfx)    
+	let buflist = GetBufferList()    
+	for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')    
+		if bufwinnr(bufnum) != -1    
+			exec(a:pfx.'close')    
+			return    
+		endif    
+	endfor    
+	if a:pfx == 'l' && len(getloclist(0)) == 0    
+			echohl ErrorMsg    
+			echo "Location List is Empty."    
+			return    
+	endif    
+	let winnr = winnr()    
+	exec(a:pfx.'open')    
+	if winnr() != winnr    
+		wincmd p    
+	endif    
+endfunction    
      
-"nmap <silent> <F2> :call ToggleList("Quickfix", 'c')<CR>
+nmap <silent> <F2> :call ToggleList("Quickfix", 'c')<CR>
 
 
 """"""""""""""""""""""""""""""
 " choosewin settings
 """"""""""""""""""""""""""""""
 nmap . <Plug>(choosewin)
-let g:choosewin_overlay_enable = 1
+let g:choosewin_overlay_enable = 0
 let g:choosewin_label = "asdfghjkl"
 
 
@@ -190,7 +195,6 @@ map ,hl :IndentGuidesToggle<CR>
 """"""""""""""""""""""""""""""
 " coc
 """"""""""""""""""""""""""""""
-"inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -204,12 +208,12 @@ inoremap <silent><expr> <Tab>
 
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-
-
-inoremap <silent><expr> <c-space> coc#refresh()
-inoremap <silent><expr> <NUL> coc#refresh() 
+"inoremap <silent><expr> <c-space> coc#refresh()
+"inoremap <silent><expr> <NUL> coc#refresh() 
 
 nnoremap g<Tab> :call CocAction('jumpDefinition', 'drop')<CR>
+nnoremap g<Tab> :call CocAction('jumpDefinition', 'drop')<CR>
+nnoremap g<space> <Plug>(coc-references)
 vnoremap g<Tab> :call CocAction('jumpDefinition', 'drop')<CR>
 
 "nnoremap g<CR> :call CocAction('jumpDefinition', 'split')<CR>
@@ -220,7 +224,7 @@ nmap gn <Plug>(coc-diagnostic-next-error)
 nmap gp <Plug>(coc-diagnostic-prev-error)
 nmap gi <Plug>(coc-diagnostic-info)
 nmap g= <Plug>(coc-format-selected)
-vmap g= <Plug>(coc-format-selected)
+xmap g= <Plug>(coc-format-selected)
 nmap gf <Plug>(coc-format)
 nmap gr <Plug>(coc-rename)
 nmap ga :CocCommand clangd.switchSourceHeader<CR>
@@ -234,6 +238,7 @@ nmap ga :CocCommand clangd.switchSourceHeader<CR>
 " autocmd VimEnter * CocCommand explorer " 开启启动文件浏览器
 " execute("normal! <leader>n")
 " nnoremap <silent> <space>g :<C-u>CocList --normal gstatus<CR>
+autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
 
 """"""""""""""""""""""""""""""
 " AirLine
@@ -245,7 +250,7 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#buffer_nr_show = 0
 let g:airline#extensions#tabline#formatter = 'default'
-let g:airline_theme = 'light'
+let g:airline_theme = 'alduin'
 let g:airline#extensions#keymap#enabled = 1
 let g:airline#extensions#tabline#buffer_idx_mode = 1
 nmap <C-W> <C-H>:sp<CR><C-L>:bd<cr>
@@ -273,7 +278,21 @@ let g:airline_symbols.readonly = "RO"
 let g:airline_symbols.dirty = "DT"     
 let g:airline_symbols.crypt = "CR"    
 let g:airline_extensions = []
-
+let g:coc_global_extensions = [
+    \ 'coc-clangd',
+    \ 'coc-cmake',
+    \ 'coc-vimlsp',
+    \ 'coc-highlight',
+    \ 'coc-html',
+    \ 'coc-yank',
+    \ 'coc-explorer', 
+    \ 'coc-ecdict',
+    \ 'coc-pairs',
+    \ 'coc-tsserver',
+    \ 'coc-pyright',
+    \ 'coc-css',
+    \ 'coc-snippets',
+  \ ]
 
 """"""""""""""""""""""""""""""
 " Floaterm
@@ -312,9 +331,9 @@ func InsModeFZF()
   :GFiles
   stopinsert
 endfunc
-noremap <Leader>e :GFiles<CR>
-inoremap <Leader>e <ESC>:GFiles<CR>
-noremap <Leader><Leader>e :Files<CR>
+nnoremap <Leader>e :GFiles<CR>
+nnoremap <Leader>e <ESC>:GFiles<CR>
+nnoremap <Leader><Leader>e :Files<CR>
 
 
 """"""""""""""""""""""""""""""
@@ -329,7 +348,11 @@ let Tlist_Exit_OnlyWindow = 1
 """""""""""""""""""""""""""""
 
 
-
+"""""""""""""""""""""""""
+ "embear/vim-localvimrc
+"""""""""""""""""""""""""
+let g:localvimrc_ask=0 
+let g:localvimrc_sandbox=0 
 
 
 """""""""""""""""""""""""
@@ -338,9 +361,8 @@ let Tlist_Exit_OnlyWindow = 1
 filetype plugin on
 let g:NERDCreateDefaultMappings = 0
 
-" vmap <leader>c :call Comment()<CR>
-vmap <leader>c  <Plug>NERDCommenterToggle
-nmap <leader>c  <Plug>NERDCommenterToggle
+" xmap <leader>c :call Comment()<CR>
+xmap /  <Plug>NERDCommenterToggle
 
 "function Comment()
 	"execute "normal \<Plug>NERDCommenterToggle"
@@ -357,6 +379,16 @@ nmap <leader>c  <Plug>NERDCommenterToggle
 "
 
 " -----------------------
-nnoremap <tab> <shift->>
 
+let g:doge_enable_mappings='0'
+let g:doge_mapping='gc' 
+let g:doge_mapping_comment_jump_forward='<c-j>' 
+let g:doge_mapping_comment_jump_backward='<c-k>' 
+let g:doge_doc_standard_cpp='doxygen_javadoc' 
+
+
+autocmd BufReadPost *
+	\ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+	\ |   exe "normal! g`\""
+	\ | endif
 
