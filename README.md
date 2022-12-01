@@ -16,6 +16,10 @@ nvim
 :PlugInstall
 ```
 
+3. 安装其他组件
+```
+apt install universal-ctags
+```
 
 
 插件将会被安装的位置： `~/.local/share/nvim/plugged/vim-config`
