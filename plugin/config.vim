@@ -1,4 +1,4 @@
-"set nu
+"set n
 "set relativenumber
 set lazyredraw
 set wildmenu
@@ -17,7 +17,7 @@ set timeoutlen=1000
 set ttimeoutlen=10
 set updatetime=0
 set clipboard^=unnamed,unnamedplus
-set t_Co=256
+" set t_Co=256
 set fillchars=stl:\ 
 set backspace=indent,eol,start
 set foldcolumn=1
@@ -29,6 +29,7 @@ set tabstop=2
 set softtabstop=2
 set shiftwidth=2
 set autoindent
+set termguicolors
 
 
 let g:sonokai_style = 'andromeda'
@@ -57,7 +58,7 @@ inoremap <M-k> <c-o>k
 inoremap <M-h> <c-o>h
 inoremap <M-l> <c-o>l
 nnoremap <C-j> <c-e><c-e>
-nnoremap <C-k> <c-y><c-y>
+noremap <C-k> <c-y><c-y>
 
 noremap <leader>h ^
 noremap <leader>l $
@@ -86,7 +87,9 @@ noremap <c-s> :w<CR>
 inoremap <c-s> <c-o>:w<CR>
 
 
-highlight LineNr term=bold cterm=NONE ctermfg=blue ctermbg=NONE gui=NONE guifg=red guibg=NONE
+"highlight LineNr term=bold cterm=NONE ctermfg=blue ctermbg=NONE gui=NONE guifg=red guibg=NONE
+highlight CurrentWord guibg=#666688
+
 
 " 切换输入模式
 noremap <F4> :call ToggleInput()<CR>
@@ -181,10 +184,11 @@ autocmd BufRead * normal zR
 
 
 """"""""""""""""""""""""""""""
-" Indent Guides Setting
+" Indent Guides Setting 缩进会有颜色
 """"""""""""""""""""""""""""""
-let g:indent_guides_enable_on_vim_startup = 1
-map ,hl :IndentGuidesToggle<CR>
+
+"let g:indent_guides_enable_on_vim_startup = 1
+" map ,hl :IndentGuidesToggle<CR>
 "let g:indent_guides_auto_colors = 0
 "hi IndentGuidesOdd  guibg=green   ctermbg=3
 "hi IndentGuidesEven guibg=green ctermbg=4
@@ -196,17 +200,34 @@ map ,hl :IndentGuidesToggle<CR>
 " coc
 """"""""""""""""""""""""""""""
 
-function! s:check_back_space() abort
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: There's always complete item selected by default, you may want to enable
+" no select by `"suggest.noselect": true` in your configuration file.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
   let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
+  return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-inoremap <silent><expr> <Tab>
-  \ pumvisible() ? "\<C-n>" :
-  \ <SID>check_back_space() ? "\<Tab>" :
-  \ coc#refresh()
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
 
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 "inoremap <silent><expr> <c-space> coc#refresh()
 "inoremap <silent><expr> <NUL> coc#refresh() 
@@ -239,6 +260,7 @@ nmap ga :CocCommand clangd.switchSourceHeader<CR>
 " execute("normal! <leader>n")
 " nnoremap <silent> <space>g :<C-u>CocList --normal gstatus<CR>
 autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 """"""""""""""""""""""""""""""
 " AirLine
@@ -383,7 +405,7 @@ xmap /  <Plug>NERDCommenterToggle
 let g:doge_enable_mappings='0'
 let g:doge_mapping='gc' 
 let g:doge_mapping_comment_jump_forward='<c-j>' 
-let g:doge_mapping_comment_jump_backward='<c-k>' 
+"let g:doge_mapping_comment_jump_backward='<c-k>' 
 let g:doge_doc_standard_cpp='doxygen_javadoc' 
 
 
